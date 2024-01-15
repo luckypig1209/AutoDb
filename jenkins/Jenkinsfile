@@ -1,0 +1,26 @@
+pipeline {
+  agent any
+  environment {
+    TARGET = "${params.TARGET}" 
+    MODULE = "${params.MODULE}"
+    tenantSid = "${params.tenantSid}"
+    tenantId = "${params.tenantId}"
+    WORKSPACE = "/var/lib/jenkins/workspace/auto_deploy_app_db"
+  }
+  stages {
+    stage('构建前准备') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'builduser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+        script {
+          sh """                        
+               docker run --name auto_db -e TARGET=$TARGET -e MODULE=$MODULE -e tenantSid=$tenantSid -e tenantId=$tenantId -d python:latest
+
+             """
+              }
+            }
+      }
+    }
+   }
+}
+
+  
