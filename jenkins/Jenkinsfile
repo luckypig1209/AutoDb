@@ -33,7 +33,7 @@ pipeline {
           def dockerfile = 'jenkins/Dockerfile'
           def image = docker.build("${DOCKER_IMAGE_NAME}", "--build-arg TARGET=${TARGET} --build-arg MODULE=${MODULE} --build-arg tenantSid=${tenantSid} --build-arg tenantId=${tenantId} -f ${dockerfile} .")
           sh """
-               docker run -itd --name ${APP_NAME} -e MODULE=$MODULE TARGET=$TARGET tenantSid=$tenantSid tenantId=$tenantId ${DOCKER_IMAGE_NAME}
+                docker run -itd --name ${APP_NAME} -e MODULE=${MODULE} -e TARGET=${TARGET} -e tenantSid=${tenantSid} -e tenantId=${tenantId} ${DOCKER_IMAGE_NAME}
              """
 
          
