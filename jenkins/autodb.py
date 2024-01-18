@@ -1,6 +1,16 @@
+import os
+import sys
 import pymysql
 from impala.dbapi import connect
-import sys
+
+module = sys.argv[1]
+tenantid = sys.argv[2]
+tenantsid = sys.argv[3]
+
+print(f'module: {module}')
+print(f'tenantid：{tenantid}')
+print(f'tenantsid：{tenantsid}')
+
 
 impala_db = {
     'host': 'hw-test-ddp-impala-jdbc.digiwincloud.com.cn',
@@ -17,83 +27,137 @@ mysql_db = {
     'user': 'root',
     'password': 'dcms@123',
     'charset': 'utf8mb4',
-    'database': 'tbb_saas_datacenter_test'
+    'database': 'tbb_saas_datacenter'
 }
 
-indicator_sql_map = {
-    'cmdop': {
-        'impala': ['/opt/E10TW/tbb_temp_kongdata.sql', '/opt/E10TW/wf_iwc_data_tw.sql'],
-        'mysql': ['/opt/E10TW/tbb_temp_kong.sql', '/opt/E10TW/wf_iwc_tw.sql']
-    },
-    'T100': {
-        'impala': ['/opt/E10TW/tbb_temp_kongdata.sql', '/opt/E10TW/t100_demo_data.sql'],
-        'mysql': ['/opt/E10TW/tbb_temp_kong.sql', '/opt/E10TW/t100_demo.sql']
-    },
-    'TipTop': {
-        'impala': ['/opt/E10TW/tbb_temp_kongdata.sql', '/opt/E10TW/tiptop_demo_data.sql'],
-        'mysql': ['/opt/E10TW/tbb_temp_kong.sql', '/opt/E10TW/tiptop_demo.sql']
-    },
-    'e10indicator': {
-        'impala': ['/opt/E10CN/tbb_temp_kongdata.sql', '/opt/E10CN/e10indicator_data.sql'],
-        'mysql': ['/opt/E10CN/tbb_temp_kong.sql', '/opt/E10CN/e10indicator.sql']
-    },
-    'yfindicator': {
-        'impala': ['/opt/E10CN/tbb_temp_kongdata.sql'],
-        'mysql': ['/opt/E10CN/tbb_temp_kong.sql', '/opt/E10CN/yfindicator.sql']
-    }
+impala_sql = {
+    'e10indicator': [
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/tbb_temp_kongdata.sql',
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/e10indicator_data.sql'
+    ],
+    'yfindicator': [
+        '/opt/E10CN/tbb_temp_kongdata.sql'
+    ],
+    'cmdop': [
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kongdata.sql',
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/wf_iwc_data_tw.sql'
+    ],
+    'T100': [
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kongdata.sql',
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/t100_demo_data.sql'
+    ],
+    'TipTop': [
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kongdata.sql',
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tiptop_demo_data.sql'
+    ]    
 }
 
+mysql_sql = {
+    'e10indicator': [
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/tbb_temp_kong.sql',
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/e10indicator.sql'
+    ],
+    'yfindicator': [
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/tbb_temp_kong.sql',
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/yfindicator.sql'
+    ],
+    'cmdop': [
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kong.sql',
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/wf_iwc_tw.sql'
+    ],
+    'T100': [
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kong.sql',
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/t100_demo.sql'
+    ],
+    'TipTop': [
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kong.sql',
+        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tiptop_demo.sql'
+    ]
+}
 
-def execute_sql_from_file(sql_file, cursor):
+def replace_placeholder_in_sql(sql_file, tenantid, tenantsid):
     with open(sql_file, 'r', encoding='utf-8') as file:
-        sql_statements = file.read()
-        sql_commands = sql_statements.split(';')
-        for command in sql_commands:
-            if command.strip():
-                cursor.execute(command)
+        sql_content = file.read()
+        replaced_sql_content = sql_content.replace('TO_BE_REPLACE_tenantId', tenantid).replace('TO_BE_REPLACE_tenantSid', tenantsid)
+        return replaced_sql_content
+
+def write_tmp_sql_file(sql_content, sql_file):
+    # 将替换后的 SQL 内容写入临时文件
+    tmp_sql_file = sql_file + '_tmp'
+    with open(tmp_sql_file, 'w', encoding='utf-8') as file:
+        file.write(sql_content)
+    return tmp_sql_file
+
+def execute_sql_from_tmp_file(sql_file, cursor, tenantid, tenantsid):
+    replaced_sql_content = replace_placeholder_in_sql(sql_file, tenantid, tenantsid)
+    print(f"执行的 SQL 内容为：\n{replaced_sql_content}")  # 输出 SQL 内容
+    tmp_sql_file = write_tmp_sql_file(replaced_sql_content, sql_file)
+    try:
+        with open(tmp_sql_file, 'r', encoding='utf-8') as file:
+            sql_commands = file.read().split(';')
+            for command in sql_commands:
+                if command.strip():  # 检查命令是否为空
+                    try:
+                        print(f"正在执行 SQL 语句：{command}")
+                        cursor.execute(command)
+                        print(f"SQL 语句执行成功")
+                    except Exception as e:
+                        print(f"执行 SQL 语句时发生异常: {e}")
+            # 添加 commit 操作，确保它与前面的代码是相匹配的
+            cursor.execute("COMMIT")
+            print("执行 commit 操作")
+    except Exception as e:
+        print(f"执行 SQL 语句时发生异常: {e}")
+    finally:
+        os.remove(tmp_sql_file)  # 执行完成后删除临时文件
 
 
-def execute_sql_by_indicator_type(execute_sql_by_indicator_type, db_info, indicator_sql_map):
+# 修改 execute_sql_by_id 函数，调用 execute_sql_from_tmp_file
+def execute_sql_by_id(module, db_info, sql_map, tenantid, tenantsid):
     try:
         if 'impala' in db_info:
-            conn = connect(host=db_info['host'], port=db_info['port'],
-                           user=db_info['user'], password=db_info['password'],
-                           database=db_info['database'])
-        elif 'mysql' in db_info:
-            conn = pymysql.connect(host=db_info['host'], port=db_info['port'],
-                                   user=db_info['user'], password=db_info['password'],
-                                   database=db_info['database'])
+            with connect(host=db_info['impala']['host'], port=db_info['impala']['port'],
+                         user=db_info['impala']['user'], password=db_info['impala']['password'],
+                         database=db_info['impala']['database']) as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute('SHOW DATABASES')
+                    databases = cursor.fetchall()
+                    print('数据库连通性正常')
 
-        cursor = conn.cursor()
+                    if module in sql_map:
+                        sql_files = sql_map[module]
+                        for file in sql_files:
+                            execute_sql_from_tmp_file(file, cursor, tenantid, tenantsid)
 
-        if indicator_type in indicator_sql_map:
-            sql_files = indicator_sql_map[indicator_type][db_info]
-            for file in sql_files:
-                execute_sql_from_file(file, cursor)
+                    print('执行完成')
 
-        conn.close()
-        print('执行完成')
+        elif 'mysql' in db_info:  # 添加MySQL的检查
+            conn = pymysql.connect(host=db_info['mysql']['host'], port=db_info['mysql']['port'],
+                                  user=db_info['mysql']['user'], password=db_info['mysql']['password'],
+                                  database=db_info['mysql']['database'], charset='utf8mb4')
+            with conn.cursor() as cursor:
+                print('数据库连通性正常')
+
+                if module in sql_map:
+                    sql_files = sql_map[module]
+                    for file in sql_files:
+                        execute_sql_from_tmp_file(file, cursor, tenantid, tenantsid)
+                conn.commit()    
+
+                print('执行完成')
     except Exception as e:
-        print(f'执行 {indicator_type} 指标时发生异常:', e)
+        print('数据库连接失败:', e)
 
+# 添加执行 Impala 和 MySQL SQL 的代码
 
-def main():
-    if len(sys.argv) != 2 or sys.argv[1] not in indicator_sql_map:
-        print("Usage: python execute_sql.py <indicator_type>")
-        return
+# 执行 Impala SQL
+try:
+    execute_sql_by_id(module, {'impala': impala_db}, impala_sql, tenantid, tenantsid)
+except Exception as e:
+    print('发生异常:', e)
 
-    indicator_type = sys.argv[1]
-
-    try:
-        execute_sql_by_indicator_type(indicator_type, impala_db, indicator_sql_map)
-    except Exception as e:
-        print(f'在处理指标类型 {indicator_type} 时发生异常:', e)
-
-    try:
-        execute_sql_by_indicator_type(indicator_type, mysql_db, indicator_sql_map)
-    except Exception as e:
-        print(f'在处理指标类型 {indicator_type} 时发生异常:', e)
-
-
-if __name__ == "__main__":
-    main()
+# 执行 MySQL SQL
+try:
+    execute_sql_by_id(module, {'mysql': mysql_db}, mysql_sql, tenantid, tenantsid)
+except Exception as e:
+    print('发生异常:', e)
