@@ -10,7 +10,8 @@ ARG tenantSid
 RUN echo "MODULE: ${MODULE}"
 RUN echo "tenantId: ${tenantId}"
 RUN echo "tenantSid: ${tenantSid}"
-RUN pip3 install pymysql impyla
+#RUN pip3 install pymysql impyla
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pymysql impala
 
 WORKDIR /opt
 RUN python3 autodb.py ${MODULE} ${tenantId} ${tenantSid}
