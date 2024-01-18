@@ -11,6 +11,6 @@ RUN echo "MODULE: ${MODULE}"
 RUN echo "tenantId: ${tenantId}"
 RUN echo "tenantSid: ${tenantSid}"
 
-RUN python3 autodb.py ${MODULE} ${tenantId} ${tenantSid}
+RUN cd /opt && python3 autodb.py ${MODULE} ${tenantId} ${tenantSid}
 
 CMD     ["/bin/bash"]
