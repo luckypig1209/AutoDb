@@ -32,46 +32,46 @@ mysql_db = {
 
 impala_sql = {
     'e10indicator': [
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/tbb_temp_kongdata.sql',
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/e10indicator_data.sql'
+        '/opt/E10CN/tbb_temp_kongdata.sql',
+        '/opt/E10CN/e10indicator_data.sql'
     ],
     'yfindicator': [
         '/opt/E10CN/tbb_temp_kongdata.sql'
     ],
     'cmdop': [
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kongdata.sql',
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/wf_iwc_data_tw.sql'
+        '/opt/E10TW/tbb_temp_kongdata.sql',
+        '/opt/E10TW/wf_iwc_data_tw.sql'
     ],
     'T100': [
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kongdata.sql',
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/t100_demo_data.sql'
+        '/opt/E10TW/tbb_temp_kongdata.sql',
+        '/opt/E10TW/t100_demo_data.sql'
     ],
     'TipTop': [
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kongdata.sql',
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tiptop_demo_data.sql'
+        '/opt/E10TW/tbb_temp_kongdata.sql',
+        '/opt/E10TW/tiptop_demo_data.sql'
     ]    
 }
 
 mysql_sql = {
     'e10indicator': [
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/tbb_temp_kong.sql',
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/e10indicator.sql'
+        '/opt/E10CN/tbb_temp_kong.sql',
+        '/opt/E10CN/e10indicator.sql'
     ],
     'yfindicator': [
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/tbb_temp_kong.sql',
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10CN/yfindicator.sql'
+        '/opt/E10CN/tbb_temp_kong.sql',
+        '/opt/E10CN/yfindicator.sql'
     ],
     'cmdop': [
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kong.sql',
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/wf_iwc_tw.sql'
+        '/opt/E10TW/tbb_temp_kong.sql',
+        '/opt/E10TW/wf_iwc_tw.sql'
     ],
     'T100': [
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kong.sql',
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/t100_demo.sql'
+        '/opt/E10TW/tbb_temp_kong.sql',
+        '/opt/E10TW/t100_demo.sql'
     ],
     'TipTop': [
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tbb_temp_kong.sql',
-        '/Users/zhuhaoran/workspace/出货脚本/脚本/E10TW/tiptop_demo.sql'
+        '/opt/E10TW/tbb_temp_kong.sql',
+        '/opt/E10TW/tiptop_demo.sql'
     ]
 }
 
