@@ -5,8 +5,11 @@ ADD E10CN /opt/E10CN
 ADD E10TW /opt/E10TW
 #ARG TARGET
 ARG MODULE
-ARG tenantSid
 ARG tenantId
+ARG tenantSid
+RUN echo "MODULE: ${MODULE}"
+RUN echo "tenantId: ${tenantId}"
+RUN echo "tenantSid: ${tenantSid}"
 
 
-CMD     ["/bin/bash"]
+CMD ["python3", "autodb.py", "$MODULE", "$tenantId", "$tenantSid"]
