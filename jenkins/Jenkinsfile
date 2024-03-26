@@ -64,6 +64,6 @@ def deploy(target, host, user, password,PORT) {
   remote.pty = true
   sshPut remote: remote, from: "./jenkins/auto_sql.sh", into: '.'
   sshCommand remote: remote, command: "chmod +x ./auto_sql.sh", sudo: true
-  sshCommand remote: remote, command: "bash -c './auto_sql.sh ${env.BUILD_ID} ${APP_NAME} ${MODULE} ${TARGET} ${tenantSid} ${tenantId}'" // 传递 target 参数
+  sshCommand remote: remote, command: "bash -c './auto_sql.sh ${env.BUILD_ID} ${MODULE} ${TARGET} ${tenantSid} ${tenantId}'" // 传递 target 参数
 }
   
