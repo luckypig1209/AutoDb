@@ -8,8 +8,7 @@ pipeline {
     tenantId = "${params.tenantId}"
     PORT = "0"
     DOCKER_REGISTRY_URL = "https://registry.digiwincloud.com.cn"
-    DOCKER_REGISTRY_PROJECT = "tbb"
-    DOCKER_IMAGE_NAME = "${DOCKER_REGISTRY_PROJECT}/auto_sql:0.0.0.${env.BUILD_ID}"
+    DOCKER_IMAGE_NAME = "tbb/auto_sql:0.0.0.${env.BUILD_ID}"
 
     WORKSPACE = "/var/lib/jenkins/workspace/auto_deploy_app_db"
   }
