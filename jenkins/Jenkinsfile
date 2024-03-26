@@ -39,6 +39,7 @@ pipeline {
         }
       }
     }
+    }
     stage('发布至prod环境') {
       when {
         expression { TARGET == 'prod' } 
@@ -53,7 +54,7 @@ pipeline {
     }  
    }
 }
-}
+
 def deploy(target, host, user, password,PORT) {
   def remote = [:]
   remote.name = "remote-host"
