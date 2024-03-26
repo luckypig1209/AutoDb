@@ -1,3 +1,9 @@
+#!/bin/bash
+DOCKER_REGISTRY_URL="registry.digiwincloud.com.cn"
+DOCKER_REGISTRY_PROJECT="tbb"
+DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_PROJECT}/auto_sql:0.0.0:$1"
+
+
 if docker inspect ${APP_NAME} >/dev/null 2>&1; then
     docker stop ${APP_NAME}
     docker rm ${APP_NAME}
