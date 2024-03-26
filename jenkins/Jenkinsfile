@@ -31,7 +31,7 @@ pipeline {
       steps {
         script {
           def dockerfile = 'jenkins/Dockerfile'
-          def image = docker.build("${DOCKER_IMAGE_NAME}", "--build-arg TARGET=${TARGET} --build-arg MODULE=${MODULE} --build-arg tenantSid=${tenantSid} --build-arg tenantId=${tenantId} -f ${dockerfile} .")
+          def image = docker.build("${DOCKER_IMAGE_NAME}", "--no-cache --build-arg TARGET=${TARGET} --build-arg MODULE=${MODULE} --build-arg tenantSid=${tenantSid} --build-arg tenantId=${tenantId} -f ${dockerfile} .")
           docker.withRegistry("${DOCKER_REGISTRY_URL}", "harbor_cn") {
           image.push()
 
