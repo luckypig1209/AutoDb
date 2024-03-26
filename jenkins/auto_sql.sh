@@ -21,3 +21,6 @@ echo "${MODULE},${TARGET},${tenantSid},${tenantId}"
 
 
 docker run --network=host -itd --name auto_sql -e MODULE=${MODULE} -e TARGET=${TARGET} -e tenantSid=${tenantSid} -e tenantId=${tenantId} ${DOCKER_IMAGE_NAME}
+
+docker exec auto_sql sh -c "/usr/local/bin/python3 /opt/autodb.py ${MODULE} ${tenantId} ${tenantSid}" 
+
