@@ -15,6 +15,6 @@ RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pymysql impyla
 
 WORKDIR /opt
 #RUN apt update && apt -y install telnet
-RUN python3 autodb.py ${MODULE} ${tenantId} ${tenantSid}
+#RUN python3 autodb.py ${MODULE} ${tenantId} ${tenantSid}
 
 CMD     ["/bin/bash"]
