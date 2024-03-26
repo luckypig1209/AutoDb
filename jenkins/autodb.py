@@ -13,18 +13,18 @@ print(f'tenantsid：{tenantsid}')
 
 
 impala_db = {
-    'host': 'hw-test-ddp-impala-jdbc.digiwincloud.com.cn',
+    'host': 'ddp-impala-jdbc.digiwincloud.com',
     'port': 21051,
     'user': 'tbb',
     'password': 'tbb123',
     'charset': 'utf8mb4',
-    'database': 'test'
+    'database': 'tbb'
 }
 
 mysql_db = {
-    'host': '13.76.195.185',
+    'host': 'dap-mariadb.mariadb.database.azure.com',
     'port': 3306,
-    'user': 'root',
+    'user': 'rootadmin@dap-mariadb',
     'password': 'dcms@123',
     'charset': 'utf8mb4',
     'database': 'tbb_saas_datacenter'
