@@ -15,10 +15,7 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'builduser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
         script {
           sh """                        
-               if docker inspect ${APP_NAME} >/dev/null 2>&1; then
-                   docker stop ${APP_NAME}
-                   docker rm ${APP_NAME}
-               fi
+            echo "123"
       
 
              """
@@ -32,16 +29,33 @@ pipeline {
         script {
           def dockerfile = 'jenkins/Dockerfile'
           def image = docker.build("${DOCKER_IMAGE_NAME}", "--build-arg TARGET=${TARGET} --build-arg MODULE=${MODULE} --build-arg tenantSid=${tenantSid} --build-arg tenantId=${tenantId} -f ${dockerfile} .")
-          sh """
-                docker run -itd --name ${APP_NAME} -e MODULE=${MODULE} -e TARGET=${TARGET} -e tenantSid=${tenantSid} -e tenantId=${tenantId} ${DOCKER_IMAGE_NAME}
-             """
-
-         
         }
       }
     }
-
+    stage('发布至prod环境') {
+      when {
+        expression { TARGET == 'prod' } 
+      }
+      steps {
+        script {
+          withCredentials([usernamePassword(credentialsId: 'twprod', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+            deploy(TARGET, "52.230.85.205", USERNAME, PASSWORD,PORT)
+          }
+        }
+      }
+    }  
    }
 }
-
+def deploy(target, host, user, password,PORT) {
+  def remote = [:]
+  remote.name = "remote-host"
+  remote.host = host
+  remote.user = user
+  remote.password = password
+  remote.allowAnyHosts = true
+  remote.pty = true
+  sshPut remote: remote, from: "./jenkins/${APP_NAME}.sh", into: '.'
+  sshCommand remote: remote, command: "chmod +x ./${APP_NAME}.sh", sudo: true
+  sshCommand remote: remote, command: "bash -c './${APP_NAME}.sh ${APP_NAME} ${MODULE} ${TARGET} ${tenantSid} ${tenantId}'" // 传递 target 参数
+}
   
