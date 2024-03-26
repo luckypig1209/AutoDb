@@ -14,6 +14,6 @@ RUN echo "tenantSid: ${tenantSid}"
 RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pymysql impyla
 
 WORKDIR /opt
-RUN python3 autodb.py ${MODULE} ${tenantId} ${tenantSid}
+#RUN python3 autodb.py ${MODULE} ${tenantId} ${tenantSid}
 
 CMD     ["/bin/bash"]
