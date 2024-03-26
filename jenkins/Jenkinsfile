@@ -8,6 +8,10 @@ pipeline {
     tenantSid = "${params.tenantSid}"
     tenantId = "${params.tenantId}"
     PORT = "0"
+    DOCKER_REGISTRY_URL = "https://registry.digiwincloud.com.cn"
+    DOCKER_REGISTRY_PROJECT = "tbb"
+    DOCKER_IMAGE_NAME = "${DOCKER_REGISTRY_PROJECT}/auto_sql:0.0.0.${env.BUILD_ID}"
+
     WORKSPACE = "/var/lib/jenkins/workspace/auto_deploy_app_db"
   }
   stages {
@@ -30,6 +34,9 @@ pipeline {
         script {
           def dockerfile = 'jenkins/Dockerfile'
           def image = docker.build("${DOCKER_IMAGE_NAME}", "--build-arg TARGET=${TARGET} --build-arg MODULE=${MODULE} --build-arg tenantSid=${tenantSid} --build-arg tenantId=${tenantId} -f ${dockerfile} .")
+          docker.withRegistry("${DOCKER_REGISTRY_URL}", "harbor_cn") {
+          image.push()
+
         }
       }
     }
@@ -47,6 +54,7 @@ pipeline {
     }  
    }
 }
+}
 def deploy(target, host, user, password,PORT) {
   def remote = [:]
   remote.name = "remote-host"
@@ -57,6 +65,6 @@ def deploy(target, host, user, password,PORT) {
   remote.pty = true
   sshPut remote: remote, from: "./jenkins/${APP_NAME}.sh", into: '.'
   sshCommand remote: remote, command: "chmod +x ./${APP_NAME}.sh", sudo: true
-  sshCommand remote: remote, command: "bash -c './${APP_NAME}.sh ${APP_NAME} ${MODULE} ${TARGET} ${tenantSid} ${tenantId}'" // 传递 target 参数
+  sshCommand remote: remote, command: "bash -c './${APP_NAME}.sh ${env.BUILD_ID} ${APP_NAME} ${MODULE} ${TARGET} ${tenantSid} ${tenantId}'" // 传递 target 参数
 }
   
