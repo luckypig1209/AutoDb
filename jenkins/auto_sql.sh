@@ -20,4 +20,4 @@ fi
 echo "${MODULE},${TARGET},${tenantSid},${tenantId}"
 
 
-docker run -itd --name auto_sql -e MODULE=${MODULE} -e TARGET=${TARGET} -e tenantSid=${tenantSid} -e tenantId=${tenantId} ${DOCKER_IMAGE_NAME}
+docker run --network=host -itd --name auto_sql -e MODULE=${MODULE} -e TARGET=${TARGET} -e tenantSid=${tenantSid} -e tenantId=${tenantId} ${DOCKER_IMAGE_NAME}
