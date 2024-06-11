@@ -1,4 +1,4 @@
-FROM python:latest as auto_db
+FROM registry.digiwincloud.com.cn/tbb/python:3.12.3.0 as auto_db
 
 ADD jenkins/autodb.py /opt/autodb.py
 ADD E10CN /opt/E10CN
